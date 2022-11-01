@@ -72,7 +72,11 @@ export var resolver = {
                 code: PASSWORD_NOT_MATCH
             }
         }
+<<<<<<< Updated upstream
         const token = jwt.sign({ _id: user._id, name: name }, private_key, { algorithm: 'HS256' });
+=======
+        const token = jwt.sign({ _id: user._id, name: name }, private_key, { algorithm: 'HS256' , expiresIn: '1h'});
+>>>>>>> Stashed changes
         context.res.set('Set-Cookie', `token=${token};`);
         return {
             user: user

@@ -24,15 +24,13 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
-app.use('/graphql', async (req, res) => {
-    var result = await graphqlHTTP({
+app.use('/graphql', (req, res) => {
+    return graphqlHTTP({
         schema: schema,
         rootValue: resolver,
         graphiql: true,
         context: { req, res }
     })(req, res);
-    console.log(result);
-    return result;
 });
 
 app.use(verifyToken);
