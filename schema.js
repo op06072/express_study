@@ -73,7 +73,7 @@ export var resolver = {
             }
         }
         const token = jwt.sign({ _id: user._id, name: name }, private_key, { algorithm: 'HS256' });
-        context.res.set('cookie', `token=${token};`);
+        context.res.set('Set-Cookie', `token=${token};`);
         return {
             user: user
         }
