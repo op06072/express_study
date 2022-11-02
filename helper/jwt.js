@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import User from '../mongoose/schema/user.js';
-//import Pwd from '../mongoose/schema/pwd.js';
 
 import { public_key } from './key.js';
 

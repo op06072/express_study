@@ -1,5 +1,5 @@
-import mongoose from "../model.js";
 import bcrypt from "bcrypt";
+import mongoose from "../model.js";
 
 const userSchema = new mongoose.Schema({
     name: String,
@@ -24,8 +24,6 @@ userSchema.post('save', async function(docs, next){
     }
     next();
 })
-
-
 
 const User = mongoose.model("User", userSchema);
 

@@ -1,10 +1,10 @@
-import express from 'express';
 import ejs from 'ejs';
 import path from 'path';
+import dotenv from 'dotenv';
+import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
 import { verifyToken } from './helper/jwt.js';
 import { schema, resolver } from './schema.js';
-import dotenv from 'dotenv';
 
 dotenv.config({
 	path : process.env.NODE_ENV === "development" ? ".env.development" : ".env.production"

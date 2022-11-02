@@ -29,11 +29,11 @@ export var schema = buildSchema(`
 
 export var resolver = {
     users: async(args, context, info) => {
-        return await User.find();
+        return User.find();
     },
     user: async (args, context, info) => {
         const { name } = args;
-        return await User.findOne({name: name});
+        return User.findOne({name: name});
     },
     createUser: async (args, context, info) => {
         const {name, pwd} = args;
