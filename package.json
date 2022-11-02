@@ -17,10 +17,13 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development node server.js",
+    "dev": "cross-env DOTENV_CONFIG_PATH=.env.development node -r dotenv/config server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
 }
