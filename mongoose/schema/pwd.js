@@ -11,6 +11,6 @@ pwdSchema.pre('save', async function () {
     this.pwd = await bcrypt.hash(this.pwd, salt);
 })
 
-const Pwd = mongoose.model("Pwd", pwdSchema);
+//const Pwd = mongoose.model("Pwd", pwdSchema);
 
-export default Pwd;
+//export default Pwd;

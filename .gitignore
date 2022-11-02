@@ -252,3 +252,4 @@ fabric.properties
 *.pem
 
 # End of https://www.toptal.com/developers/gitignore/api/webstorm+all,node,visualstudiocode
+package-lock.json
