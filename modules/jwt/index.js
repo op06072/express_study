@@ -1,8 +1,19 @@
 import jwt from 'jsonwebtoken';
 import User from '../mongoose/schema/user.js';
-//import Pwd from '../mongoose/schema/pwd.js';
+import fs from "fs";
 
-import { public_key } from './key.js';
+export const private_key = Buffer.from(
+    fs.readFileSync('private.pem', 'utf8'), 'base64'
+).toString('ascii');
+export const public_key = Buffer.from(
+    fs.readFileSync('public.pem', 'utf8'), 'base64'
+).toString('ascii');
+export const refresh_priv_key = Buffer.from(
+    fs.readFileSync('refresh_private.pem', 'utf8'), 'base64'
+).toString('ascii');
+export const refresh_pub_key = Buffer.from(
+    fs.readFileSync('refresh_public.pem', 'utf8'), 'base64'
+).toString('ascii');
 
 export const verifyToken = async (req, res, next) => {
     const authToken = req.get('Authorization');
@@ -13,7 +24,7 @@ export const verifyToken = async (req, res, next) => {
     const token = authToken.split(' ')[1];
     let verify;
     try {
-        verify = jwt.verify(token, public_key);
+        verify = jwt.verify(token, this.public_key);
     } catch (err) {
         req.isAuth = false;
         return next();

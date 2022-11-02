@@ -1,14 +1,14 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { buildSchema } from "graphql";
-import User from './mongoose/schema/user.js';
-import { private_key, refresh_priv_key } from './helper/key.js';
+import User from '../modules/mongoose/schema/user.js';
+import { private_key, refresh_priv_key } from '../modules/jwt/index.js';
 
 const USER_NOT_FOUND = 'user not found';
 const PASSWORD_NOT_MATCH = 'password not match';
 const SUCCESS = 'success';
 
-export var schema = buildSchema(`
+export const schema = buildSchema(`
     
     type User {
         name: String!
@@ -27,7 +27,7 @@ export var schema = buildSchema(`
     }
 `);
 
-export var resolver = {
+export const resolver = {
     users: async(args, context, info) => {
         return await User.find();
     },
