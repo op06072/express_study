@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { buildSchema } from "graphql";
 import User from './mongoose/schema/user.js';
-import { private_key } from './helper/key.js';
+import { private_key, refresh_priv_key } from './helper/key.js';
 
 const USER_NOT_FOUND = 'user not found';
 const PASSWORD_NOT_MATCH = 'password not match';
@@ -12,8 +12,8 @@ export var schema = buildSchema(`
     
     type User {
         name: String!
-        pwd: String
-        c_date: Int
+        c_date: Float
+        DATE: [Float]
     }
     
     type Query {
@@ -48,7 +48,9 @@ export var resolver = {
     login: async (args, context, info) => {
         const {name, pwd} = args;
 
-        const usr = await User.findOne({name : name});
+        const query = {name: name};
+
+        const usr = await User.findOne(query);
         if (!usr) {
             return USER_NOT_FOUND;
         }
@@ -59,7 +61,12 @@ export var resolver = {
         const token = jwt.sign(
             { _id: usr._id, name: name }, private_key, { algorithm: 'HS256' , expiresIn: '1h'}
         );
-        context.res.set('Set-Cookie', `token=${token};`);
+        const refreshToken = jwt.sign(
+            { _id: usr._id, name: name }, refresh_priv_key, { algorithm: 'HS256' , expiresIn: '14d'}
+        );
+        await User.updateOne(query, { $set: {refresh_token: refreshToken}});
+        context.res.cookie('token', token, { httpOnly: true });
+        context.res.cookie('refresh_token', refreshToken, { httpOnly: true });
         return SUCCESS;
-    },
+    }
 };

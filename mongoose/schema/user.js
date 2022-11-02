@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 const userSchema = new mongoose.Schema({
     name: String,
     pwd: String,
+    refresh_token: String,
     c_date: { type: Number, default: Number(Date.now()) },
 });
 
