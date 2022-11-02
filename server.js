@@ -1,5 +1,4 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import ejs from 'ejs';
 import path from 'path';
 import { graphqlHTTP } from 'express-graphql';
@@ -22,8 +21,8 @@ var server = app.listen(3000, function(){
 });
 app.use(express.static('public'));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/graphql', (req, res) => {
     return graphqlHTTP({
