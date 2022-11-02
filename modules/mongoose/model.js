@@ -1,4 +1,4 @@
-import { mongoose } from "mongoose";
+import mongoose from "mongoose";
 const URI = process.env.MONGO_URI || "localhost";
 const DB = process.env.MONGO_DB || "mongoose";
 

@@ -1,7 +1,7 @@
-import express from 'express';
-import bodyParser from 'body-parser';
 import ejs from 'ejs';
 import path from 'path';
+import dotenv from 'dotenv';
+import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
 import { verifyToken } from './modules/jwt/index.js';
 import { schema, resolver } from './graphQL/schema.js';
@@ -20,8 +20,8 @@ app.engine('html', ejs.renderFile);
 
 app.use(express.static('public'));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/graphql', (req, res) => {
     return graphqlHTTP({
