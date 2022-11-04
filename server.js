@@ -1,14 +1,15 @@
 import ejs from 'ejs';
 import path from 'path';
+import dotenv from 'dotenv';
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import { graphqlHTTP } from 'express-graphql';
 import { verifyToken } from './modules/jwt/index.js';
 import { schema, resolver } from './graphQL/schema.js';
-// import dotenv from 'dotenv';
 
-// dotenv.config({
-// 	path : process.env.NODE_ENV === "development" ? ".env.development" : ".env.production"
-// });
+dotenv.config({
+    path : process.env.NODE_ENV === "development" ? ".env.development" : ".env.production"
+});
 
 
 let app = express();
@@ -18,7 +19,8 @@ app.set('view engine', 'ejs');
 app.engine('html', ejs.renderFile);
 
 app.use(express.static('public'));
-
+app.use(verifyToken);
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -30,8 +32,6 @@ app.use('/graphql', (req, res) => {
         context: { req, res }
     })(req, res);
 });
-
-app.use(verifyToken);
 
 let server = app.listen(3000, function(){
     console.log("Express server has started on port 3000");

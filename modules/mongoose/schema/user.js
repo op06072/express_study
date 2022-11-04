@@ -3,6 +3,7 @@ import mongoose from "../model.js";
 
 const userSchema = new mongoose.Schema({
     name: String,
+    email: String,
     pwd: String,
     refresh_token: String,
     c_date: { type: Number, default: Number(Date.now()) },
