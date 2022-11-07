@@ -13,6 +13,6 @@ db.once("open", function () {
     console.log("Connected to mongod server");
 });
 
-mongoose.connect(`mongodb://${USERNAME}:${PASSWORD}${URI}/${DB}`, { useNewUrlParser: true });
+mongoose.connect(`mongodb://${USERNAME}:${PASSWORD}@${URI}/${DB}`, { useNewUrlParser: true });
 
 export default mongoose;
