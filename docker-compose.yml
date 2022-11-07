@@ -32,6 +32,8 @@ services:
 
   redis:
     image: redis:7.0.5-bullseye
+    ports:
+      - "6379:6379"
 
 volumes:
   mongodb-data:
