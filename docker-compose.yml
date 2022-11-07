@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   app:
@@ -10,18 +10,25 @@ services:
         - ./be/:/app/
     ports:
         - "3000:3000"
-    command:
-      - npm install
-      - npm run dev
+    working_dir: /app
+    command: bash -c "npm install && npm run dev"
+    secrets:
+      - mongo_root_id
+      - mongo_root_pw
 
   db:
     image: mongo:6.0.2-focal
     volumes:
       - mongodb-data:/data/db
+    ports:
+      - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: /run/secrets/mongo-root-id
-      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/mongo-root-pw
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongo_root_id
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_root_pw
       MONGO_DB: mongoose
+    secrets:
+      - mongo_root_id
+      - mongo_root_pw
 
   redis:
     image: redis:7.0.5-bullseye
@@ -30,7 +37,7 @@ volumes:
   mongodb-data:
 
 secrets:
-  mongo-root-id:
+  mongo_root_id:
     external: true
-  mongo-root-pw:
+  mongo_root_pw:
     external: true
