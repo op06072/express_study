@@ -3,6 +3,7 @@ version: '3.9'
 services:
   app:
     image: node:19-buster-slim
+    restart: always
     depends_on:
         - db
         - redis
@@ -22,11 +23,13 @@ services:
 
   db:
     image: mongo:6.0.2-focal
+    restart: always
     volumes:
       - mongodb-data:/data/db
     ports:
       - "27017:27017"
     environment:
+      TZ: "Asia/Seoul"
       MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/root_id
       MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/root_pw
       MONGO_DB: mongoose
@@ -36,6 +39,9 @@ services:
 
   redis:
     image: redis:7.0.5-bullseye
+    restart: always
+    environment:
+      TZ: "Asia/Seoul"
 
 volumes:
   mongodb-data:
