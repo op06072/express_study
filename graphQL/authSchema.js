@@ -42,7 +42,7 @@ export const auth_resolver = {
 
         const { email } = args;
         let result;
-        if (User.findOne({email: email}) !== null) return "User already exists";
+        if ((await User.findOne({email: email})) !== null) return "User already exists";
 
         let code = Math.random().toString(36).substring(2, 8);
         for (let i = 0; i < code.length; i++) {
