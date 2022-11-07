@@ -1,6 +1,12 @@
 import redis from 'redis';
 
-const redisClient = redis.createClient({ legacyMode: true });
+const URI = process.env.REDIS_URI || "localhost";
+const PORT = process.env.REDIS_PORT || "6379";
+
+const redisClient = redis.createClient({
+    url: `${URI}:${PORT}/0`,
+    legacyMode: true
+});
 redisClient.on('connect', () => {
     console.log('Redis client connected');
 });
