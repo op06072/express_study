@@ -6,7 +6,6 @@ import User from '../modules/mongoose/schema/user.js';
 import { transport } from '../modules/mail/mail.transport.js';
 import { private_key, refresh_priv_key } from '../modules/jwt/index.js';
 
-let timeoutID;
 const SUCCESS = 'success';
 const USER_NOT_FOUND = 'user not found';
 const PASSWORD_NOT_MATCH = 'password not match';
@@ -24,27 +23,15 @@ export const auth_schema = buildSchema(`
 
 export const auth_resolver = {
     verifyEmail: async (args, context, info) => {
-        if (timeoutID !== undefined) {
-            clearTimeout(timeoutID);
-        }
-        let token;
-
-        if (context.req.cookies.token !== undefined) {
-            try {
-                jwt.verify(context.req.cookies.token, private_key);
-                token = 1;
-            } catch (err) {
-                token = 0;
-            }
-        } else {
-            token = 0;
-        }
-
         const { email } = args;
         let result;
-        if ((await User.findOne({email: email})) !== null) return "User already exists";
+        
+        const n = await redisCli.exists(email);
+        if (n) await redisCli.del(email);
 
-        let code = Math.random().toString(36).substring(2, 8);
+        if ((await User.findOne({email})) !== null) return "User already exists";
+
+        const code = Math.random().toString(36).substring(2, 8);
         for (let i = 0; i < code.length; i++) {
             if (Math.random() > 0.5) {
                 code = code.substring(0, i) + code.substring(i, i + 1).toUpperCase() + code.substring(i + 1);
@@ -85,11 +72,12 @@ export const auth_resolver = {
                     </tr>
                 </table>
             `});
-            await redisCli.hmset(email, 'code', code, 'type', token);
-            timeoutID = setTimeout(async () => {
+            await redisCli.hmset(email, 'code', code);
+            const timeoutID = setTimeout(async () => {
                 const n = await redisCli.exists(email);
                 if (n) await redisCli.del(email);
             }, 1000 * 60 * 5);
+            
             result = "send requested";
         } catch (err) {
             context.res.status(400);
@@ -102,30 +90,27 @@ export const auth_resolver = {
         const res = context.res;
 
         const saved_code = await redisCli.hget(email, 'code');
-        const code_type = await redisCli.hget(email, 'type');
-        if (saved_code !== code || code_type !== 0) {
+        if (saved_code !== code) {
             res.status(412);
             return "invalid code";
         } else {
             await redisCli.del(email);
-            if(await User.findOne({email: email})) {
+            if(await User.findOne({email})) {
                 res.status(400);
                 return "User already exists";
-            } else if (await User.findOne({name: name})) {
+            } else if (await User.findOne({name})) {
                 res.status(400);
                 return "Username already exists";
             }
         }
-        await new User({name: name, email: email, pwd: pwd}).save();
+        await new User({name, email, pwd}).save();
         return SUCCESS;
     },
     login: async (args, context, info) => {
         const {email, pwd} = args;
         const res = context.res;
 
-        const query = {email: email};
-
-        const usr = await User.findOne(query);
+        const usr = await User.findOne({email});
         if (!usr) {
             res.status(404);
             return USER_NOT_FOUND;
@@ -135,14 +120,14 @@ export const auth_resolver = {
             return PASSWORD_NOT_MATCH;
         }
         const token = jwt.sign(
-            { _id: usr._id, name: usr.name, email: email }, private_key,
+            { _id: usr._id, name: usr.name, email }, private_key,
             { algorithm: 'HS512' , expiresIn: '1h'}
         );
-        const refreshToken = jwt.sign(
-            { _id: usr._id, name: usr.name, email: email }, refresh_priv_key,
+        const refresh_token = jwt.sign(
+            { _id: usr._id, name: usr.name, email }, refresh_priv_key,
             { algorithm: 'HS512' , expiresIn: '14d'}
         );
-        await User.updateOne(query, { $set: {refresh_token: refreshToken}});
+        await User.updateOne(query, { $set: {refresh_token}});
         res.cookie('token', token, { httpOnly: true });
         res.cookie('refresh_token', refreshToken, { httpOnly: true });
         return SUCCESS;
