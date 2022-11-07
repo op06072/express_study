@@ -261,3 +261,7 @@ docker-run.sh
 be
 
 docker-set.sh
+
+mongo_root_id.txt
+
+mongo_root_pw.txt

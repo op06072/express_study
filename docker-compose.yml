@@ -38,6 +38,6 @@ volumes:
 
 secrets:
   root_id:
-    external: true
+    file: ./mongo_root_id.txt
   root_pw:
-    external: true
+    file: ./mongo_root_pw.txt
