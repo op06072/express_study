@@ -31,7 +31,7 @@ export const auth_resolver = {
 
         if ((await User.findOne({email})) !== null) return "User already exists";
 
-        const code = Math.random().toString(36).substring(2, 8);
+        let code = Math.random().toString(36).substring(2, 8);
         for (let i = 0; i < code.length; i++) {
             if (Math.random() > 0.5) {
                 code = code.substring(0, i) + code.substring(i, i + 1).toUpperCase() + code.substring(i + 1);
