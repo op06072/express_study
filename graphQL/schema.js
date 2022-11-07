@@ -90,12 +90,11 @@ export const resolver = {
         const decoded = jwt.verify(context.req.cookies.token, private_key);
         const usr = await User.findOne({email: decoded.email});
         const saved_code = await redisCli.hget(decoded.email, 'code');
-        const code_type = await redisCli.hget(decoded.email, 'type');
 
         if (!usr) {
             res.status(404);
             return USER_NOT_FOUND;
-        } else if (code_type !== 1 || code !== saved_code) {
+        } else if (code !== saved_code) {
             res.status(412);
             return "invalid code";
         }
