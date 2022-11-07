@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    image: node:19-buster-slim
+    depends_on:
+        - db
+        - redis
+    volumes:
+        - ./be/:/app/
+    ports:
+        - "3000:3000"
+    command:
+      - npm install
+      - npm run dev
+
+  db:
+    image: mongo:6.0.2-focal
+    volumes:
+      - mongodb-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: /run/secrets/mongo-root-id
+      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/mongo-root-pw
+      MONGO_DB: mongoose
+
+  redis:
+    image: redis:7.0.5-bullseye
+
+volumes:
+  mongodb-data:
+
+secrets:
+  mongo-root-id:
+    external: true
+  mongo-root-pw:
+    external: true

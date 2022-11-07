@@ -255,3 +255,5 @@ fabric.properties
 package-lock.json
 
 modules/mail/mail.html
+
+docker-run.sh
