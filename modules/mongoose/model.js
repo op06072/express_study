@@ -4,7 +4,6 @@ import fs from "fs";
 const secret_path = '/run/secrets/root_'
 const USERNAME = fs.readFileSync(secret_path+'id', 'utf8').trimStart().trimEnd() || 'root';
 const PASSWORD = fs.readFileSync(secret_path+'pw', 'utf8').trimStart().trimEnd() || 'root';
-console.log(USERNAME, PASSWORD);
 const URI = process.env.MONGO_URI || "127.0.0.1";
 const DB = process.env.MONGO_DB || "mongoose";
 
