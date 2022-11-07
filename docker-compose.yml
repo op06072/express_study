@@ -12,6 +12,7 @@ services:
     ports:
         - "3000:3000"
     environment:
+      SECRET_PATH: "/run/secrets/root_"
       MONGO_URI: "db"
       REDIS_URI: "redis"
       REDIS_PORT: "6379"
@@ -46,6 +47,6 @@ volumes:
 
 secrets:
   root_id:
-    file: ./mongo_root_id.txt
+    file: ./mongo_root_id
   root_pw:
-    file: ./mongo_root_pw.txt
+    file: ./mongo_root_pw
