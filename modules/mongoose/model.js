@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import fs from "fs";
 
-const secret_path = '/run/secrets/root_'
+const secret_path = process.env.SECRET_PATH
 const USERNAME = fs.readFileSync(secret_path+'id', 'utf8').trimStart().trimEnd() || 'root';
 const PASSWORD = fs.readFileSync(secret_path+'pw', 'utf8').trimStart().trimEnd() || 'root';
 const URI = process.env.MONGO_URI || "localhost";
