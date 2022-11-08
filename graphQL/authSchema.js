@@ -72,12 +72,7 @@ export const auth_resolver = {
                     </tr>
                 </table>
             `});
-            await redisCli.hmset(email, 'code', code);
-            const timeoutID = setTimeout(async () => {
-                const n = await redisCli.exists(email);
-                if (n) await redisCli.del(email);
-            }, 1000 * 60 * 5);
-            
+            await redisCli.set(email, code, { EX: 60 * 5});
             result = "send requested";
         } catch (err) {
             context.res.status(400);
@@ -89,7 +84,7 @@ export const auth_resolver = {
         const {name, email, pwd, code} = args;
         const res = context.res;
 
-        const saved_code = await redisCli.hget(email, 'code');
+        const saved_code = await redisCli.set(email, code);
         if (saved_code !== code) {
             res.status(412);
             return "invalid code";

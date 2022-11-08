@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   app:
+    container_name: naruto_app
     image: node:19-buster-slim
     restart: always
     depends_on:
@@ -17,14 +18,17 @@ services:
       REDIS_URI: "redis"
       REDIS_PORT: "6379"
     working_dir: /app
-    command: bash -c "npm install & npm run dev"
+    command: bash -c "npm install && npm run dev"
     secrets:
       - root_id
       - root_pw
 
   db:
+    container_name: naruto_db
     image: mongo:6.0.2-focal
     restart: always
+    ports:
+        - "27017:27017"
     volumes:
       - mongodb-data:/data/db
     environment:
@@ -37,8 +41,11 @@ services:
       - root_pw
 
   redis:
+    container_name: naruto_redis
     image: redis:7.0.5-bullseye
     restart: always
+    ports:
+      - "6379:6379"
     environment:
       TZ: "Asia/Seoul"
 
