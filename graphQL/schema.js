@@ -19,7 +19,7 @@ export const schema = buildSchema(`
     
     type Query {
         users: [User]
-        user(name: String email: String): User
+        user(name: String, email: String): User
     }
     
     type Mutation {
