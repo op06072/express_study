@@ -84,7 +84,7 @@ export const auth_resolver = {
         const {name, email, pwd, code} = args;
         const res = context.res;
 
-        const saved_code = await redisCli.set(email, code);
+        const saved_code = await redisCli.get(email, code);
         if (saved_code !== code) {
             res.status(412);
             return "invalid code";
