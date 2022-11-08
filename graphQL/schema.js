@@ -19,7 +19,7 @@ export const schema = buildSchema(`
     
     type Query {
         users: [User]
-        user(name: String!): User
+        user(name: String email: String): User
     }
     
     type Mutation {
@@ -34,13 +34,19 @@ export const resolver = {
         return User.find();
     },
     user: async (args, context, info) => {
-        const { name } = args;
-        return User.findOne({name: name});
+        const { name, email } = args;
+        if (name !== undefined) {
+            return User.findOne({name});
+        } else if (email !== undefined) {
+            return User.findOne({email});
+        } else {
+            return "please provide name or email";
+        }
     },
     removeUser: async (args, context, info) => {
         const res = context.res;
         const {email, pwd} = args;
-        const usr = await User.findOne({email: email});
+        const usr = await User.findOne({email});
         const token = context.req.cookies.token;
         if (token === undefined) {
             res.status(401);
@@ -59,7 +65,7 @@ export const resolver = {
             }
         }
 
-        await User.deleteOne({email: email});
+        await User.deleteOne({email});
         context.res.clearCookie('token');
         context.res.clearCookie('refresh_token');
         return SUCCESS;
@@ -67,7 +73,7 @@ export const resolver = {
     updatePwd: async (args, context, info) => {
         const res = context.res;
         const {email, pwd, new_pwd} = args;
-        const usr = await User.findOne({email: email});
+        const usr = await User.findOne({email});
         const decoded = jwt.verify(context.req.cookies.token, private_key);
         if (decoded.email !== email) {
             res.status(401);
@@ -81,7 +87,7 @@ export const resolver = {
         }
 
         const salt = await bcrypt.genSalt(10);
-        await User.updateOne({email: email}, {pwd: await bcrypt.hash(new_pwd, salt)});
+        await User.updateOne({email}, {pwd: await bcrypt.hash(new_pwd, salt)});
         return SUCCESS;
     },
     updateEmail: async (args, context, info) => {

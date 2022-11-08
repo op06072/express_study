@@ -122,9 +122,9 @@ export const auth_resolver = {
             { _id: usr._id, name: usr.name, email }, refresh_priv_key,
             { algorithm: 'HS512' , expiresIn: '14d'}
         );
-        await User.updateOne(query, { $set: {refresh_token}});
+        await User.updateOne({email}, { $set: {refresh_token}});
         res.cookie('token', token, { httpOnly: true });
-        res.cookie('refresh_token', refreshToken, { httpOnly: true });
+        res.cookie('refresh_token', refresh_token, { httpOnly: true });
         return SUCCESS;
     }
 };
